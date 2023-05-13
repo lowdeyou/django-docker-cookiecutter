@@ -1,0 +1,44 @@
+# Docker-compose file for local development
+version: "3"
+
+volumes:
+  {{cookiecutter.project_name}}_postgres_data: {}
+  {{cookiecutter.project_name}}_postgres_data_backups: {}
+  {{cookiecutter.project_name}}_mailhog_data: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./docker/local/django/Dockerfile
+    image: {{cookiecutter.project_name}}_local_django
+    container_name: {{cookiecutter.project_name}}_local_django
+    depends_on:
+      - postgres
+      - mailhog
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - "8000:8000"
+    command: /start
+
+  postgres:
+    image: postgres:15.2-bullseye
+    container_name: {{cookiecutter.project_name}}_local_postgres
+    volumes:
+      - {{cookiecutter.project_name}}_postgres_data:/var/lib/postgresql/data:Z
+    env_file:
+      - ./.envs/.local/.postgres
+
+  mailhog:
+    build:
+      context: .
+      dockerfile: ./docker/local/mailhog/Dockerfile
+    container_name: {{cookiecutter.project_name}}_local_mailhog
+    volumes:
+      - {{cookiecutter.project_name}}_mailhog_data:/home/mailhog/mails
+    ports:
+      - "8025:8025"

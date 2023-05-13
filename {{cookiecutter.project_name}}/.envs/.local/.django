@@ -1,0 +1,2 @@
+DJANGO_SECRET_KEY=dummy_secret_key
+DEBUG=true
