@@ -1,5 +1,4 @@
 # Docker-compose file for local development
-version: "3"
 
 volumes:
   {{cookiecutter.project_name}}_postgres_data: {}
